@@ -1,0 +1,33 @@
+[
+  {
+    "model": "materials.course",
+    "pk": 2,
+    "fields": {
+      "name": "Python",
+      "preview": "",
+      "description": "DRF"
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 2,
+    "fields": {
+      "name": "Lesson_1",
+      "description": "Python_DRF",
+      "preview": "",
+      "video_link": null,
+      "course": 2
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 3,
+    "fields": {
+      "name": "Lesson_2",
+      "description": "Python_DRF",
+      "preview": "",
+      "video_link": null,
+      "course": 2
+    }
+  }
+]

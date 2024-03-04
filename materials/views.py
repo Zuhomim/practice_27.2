@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -56,7 +56,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         new_lesson = serializer.save()
@@ -67,25 +67,29 @@ class LessonCreateAPIView(generics.CreateAPIView):
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator | IsOwnerOrStaff]
+    permission_classes = [AllowAny]
     pagination_class = LessonPaginator
+    # permission_classes = [IsModerator | IsOwnerOrStaff]
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator, IsOwnerOrStaff]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsModerator, IsOwnerOrStaff]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator, IsOwnerOrStaff]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsModerator, IsOwnerOrStaff]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsAdminUser, IsOwnerOrStaff]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAdminUser, IsOwnerOrStaff]
 
 
 class SubscriptionAPIVIEW(APIView):

@@ -1,7 +1,6 @@
 from django.db import models
 
 from config import settings
-from users.models import User
 
 NULLABLE = {'null': True, 'blank': True}
 
@@ -29,7 +28,7 @@ class Lesson(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
     is_active = models.BooleanField(default=True, verbose_name="Активность подписки")
 

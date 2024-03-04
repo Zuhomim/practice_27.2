@@ -2,8 +2,10 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
+from materials.paginators import CoursePaginator, LessonPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator, IsOwnerOrStaff
 
@@ -11,6 +13,7 @@ from users.permissions import IsModerator, IsOwnerOrStaff
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = CoursePaginator
 
     def perform_create(self, serializer):
         new_course = self.request
@@ -65,6 +68,7 @@ class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsModerator | IsOwnerOrStaff]
+    pagination_class = LessonPaginator
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -82,3 +86,25 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAdminUser, IsOwnerOrStaff]
+
+
+class SubscriptionAPIVIEW(APIView):
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data
+        course_item = get_object_or_404(Course, pk=course_id)
+        subs_item = Subscription.objects.create(
+            user=user,
+            course=course_item,
+
+        )
+        subs_item.save()
+
+        if subs_item.exists():
+            subs_item.is_active = False
+            message = 'Подписка удалена'
+        else:
+            subs_item.is_active = True
+            message = 'Подписка добавлена'
+
+        return Response({"message": message})

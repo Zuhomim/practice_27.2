@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from materials.models import Lesson
+from materials.models import Lesson, Course
 from users.models import User
 
 
@@ -86,3 +86,34 @@ class LessonTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json(), {'non_field_errors': ["Запрещено использовать сторонние ссылки"]})
+
+
+class SubscriptionTestCase(APITestCase):
+
+    def setUp(self) -> None:
+        self.client = APIClient()
+        self.user = User.objects.create(email='admin@gmail.com', is_superuser=True, is_staff=True)
+
+        self.course = Course.objects.create(
+            name='test',
+            description='test',
+            owner=self.user
+        )
+
+        self.client.force_authenticate(user=self.user)
+        Course.objects.create(name="test_course")
+
+    def test_subscribe_to_course(self):
+        """Тестирование функционала подписки на курс"""
+        data = {
+            "user": self.user.id,
+            "course": self.course.id
+        }
+
+        response = self.client.post(
+            reverse('materials:subscription'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'Подписка добавлена')

@@ -24,10 +24,10 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_subscription(self, instance):
         user = self.context["request"].user
-        if user.is_authenticated:
-            subscription = Subscription.objects.filter(user=user, course=instance).first()
-            if subscription:
-                return subscription.is_active
+
+        subscription = Subscription.objects.filter(user=user, course=instance).first()
+        if subscription:
+            return subscription.is_active
         return 0
 
     class Meta:

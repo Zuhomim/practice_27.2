@@ -11,6 +11,8 @@ class Course(models.Model):
     description = models.TextField(verbose_name='Описание', **NULLABLE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE)
 
+    price = models.PositiveIntegerField(verbose_name="Цена", **NULLABLE)
+
     def __str__(self):
         return f'{self.name} ({self.description[:30]})'
 
@@ -34,3 +36,13 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f'{self.user} ({self.course.name})'
+
+
+class CoursePayment(models.Model):
+    name = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Продукт")
+    price = models.PositiveIntegerField(verbose_name="Цена", **NULLABLE)
+    link = models.URLField(max_length=200, verbose_name="Ссылка оплаты", **NULLABLE)
+    session_id = models.CharField(max_length=255, verbose_name="Идентификатор", **NULLABLE)
+
+    def __str__(self):
+        return f'{self.session_id}'

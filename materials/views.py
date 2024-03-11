@@ -4,10 +4,12 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from materials.models import Course, Lesson, Subscription
+from materials.models import Course, Lesson, Subscription, CoursePayment
 from materials.paginators import CoursePaginator, LessonPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.services import get_session
 from users.permissions import IsModerator, IsOwnerOrStaff
+from users.serializers import PaymentSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -115,3 +117,15 @@ class SubscriptionAPIVIEW(APIView):
             message = 'Подписка добавлена'
 
         return Response({"message": message})
+
+
+class PaymentAPIView(generics.CreateAPIView):
+    queryset = CoursePayment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        course_paid = serializer.save()
+        payment_link = get_session(course_paid)
+        course_paid.link = payment_link
+        course_paid.save()

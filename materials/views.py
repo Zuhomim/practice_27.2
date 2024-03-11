@@ -1,13 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from materials.models import Course, Lesson, Subscription
+from materials.models import Course, Lesson, Subscription, CoursePayment
 from materials.paginators import CoursePaginator, LessonPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.services import get_session
 from users.permissions import IsModerator, IsOwnerOrStaff
+from users.serializers import PaymentSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -56,7 +58,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         new_lesson = serializer.save()
@@ -67,44 +69,63 @@ class LessonCreateAPIView(generics.CreateAPIView):
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator | IsOwnerOrStaff]
+    permission_classes = [AllowAny]
     pagination_class = LessonPaginator
+    # permission_classes = [IsModerator | IsOwnerOrStaff]
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator, IsOwnerOrStaff]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsModerator, IsOwnerOrStaff]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator, IsOwnerOrStaff]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsModerator, IsOwnerOrStaff]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsAdminUser, IsOwnerOrStaff]
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAdminUser, IsOwnerOrStaff]
 
 
 class SubscriptionAPIVIEW(APIView):
+
     def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data
+        course_id = self.request.data.get('course')
         course_item = get_object_or_404(Course, pk=course_id)
-        subs_item = Subscription.objects.create(
-            user=user,
-            course=course_item,
 
-        )
-        subs_item.save()
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
 
         if subs_item.exists():
             subs_item.is_active = False
             message = 'Подписка удалена'
         else:
+            subs_item = Subscription.objects.create(
+                user=user,
+                course=course_item,
+            )
+            subs_item.save()
+
             subs_item.is_active = True
             message = 'Подписка добавлена'
 
         return Response({"message": message})
+
+
+class PaymentAPIView(generics.CreateAPIView):
+    queryset = CoursePayment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        course_paid = serializer.save()
+        payment_link = get_session(course_paid)
+        course_paid.link = payment_link
+        course_paid.save()

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from materials.models import Course, Lesson, Subscription
+from materials.models import Course, Lesson, Subscription, CoursePayment
 from materials.validators import ScamLinkValidator
 
 
@@ -24,15 +24,16 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_subscription(self, instance):
         user = self.context["request"].user
-        if user.is_authenticated:
-            subscription = Subscription.objects.filter(user=user, course=instance).first()
-            if subscription:
-                return subscription.is_active
+
+        subscription = Subscription.objects.filter(user=user, course=instance).first()
+        if subscription:
+            return subscription.is_active
         return 0
 
     class Meta:
         model = Course
-        fields = ('id', 'name', 'description', 'lesson_count', 'lessons')
+        fields = "__all__"
+        # fields = ('id', 'name', 'description', 'lesson_count', 'lessons')
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -40,3 +41,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = "__all__"
+
+
+class CoursePaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoursePayment
+        fields = '__all__'

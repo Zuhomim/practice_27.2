@@ -119,13 +119,13 @@ class SubscriptionAPIVIEW(APIView):
         return Response({"message": message})
 
 
-class PaymentAPIView(generics.CreateAPIView):
-    queryset = CoursePayment.objects.all()
-    serializer_class = PaymentSerializer
-    permission_classes = [AllowAny]
-
-    def perform_create(self, serializer):
-        course_paid = serializer.save()
-        payment_link = get_session(course_paid)
-        course_paid.link = payment_link
-        course_paid.save()
+# class PaymentAPIView(generics.CreateAPIView):
+#     queryset = CoursePayment.objects.all()
+#     serializer_class = PaymentSerializer
+#     permission_classes = [AllowAny]
+#
+#     def perform_create(self, serializer):
+#         course_paid = serializer.save()
+#         payment_link = get_session(course_paid)
+#         course_paid.link = payment_link
+#         course_paid.save()

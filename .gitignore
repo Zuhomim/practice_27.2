@@ -163,3 +163,5 @@ cython_debug/
 poetry.lock
 pyproject.toml
 .venv/
+.DS_Store
+dump.rdb

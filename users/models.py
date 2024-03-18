@@ -32,8 +32,12 @@ class Payment(models.Model):
     date = models.DateField(verbose_name='Дата платежа', **NULLABLE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE , verbose_name='Оплачиваемый курс', **NULLABLE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='Оплачиваемый урок', **NULLABLE)
-    amount = models.IntegerField(verbose_name='Сумма платежа')
+    amount = models.IntegerField(verbose_name='Сумма платежа', **NULLABLE)
     method = models.CharField(max_length=30, choices=PAYMENT_METHOD_CHOICE, verbose_name='Способ оплаты')
+
+    link = models.URLField(max_length=200, verbose_name="Ссылка оплаты", **NULLABLE)
+    session_id = models.CharField(max_length=255, verbose_name="Идентификатор", **NULLABLE)
+    # price = models.PositiveIntegerField(verbose_name="Цена", **NULLABLE)
 
     def __str__(self):
         return f'{self.user.name} ({self.course if self.course else self.lesson})'

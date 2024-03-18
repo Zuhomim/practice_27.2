@@ -164,3 +164,4 @@ poetry.lock
 pyproject.toml
 .venv/
 .DS_Store
+dump.rdb

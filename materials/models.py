@@ -16,6 +16,11 @@ class Course(models.Model):
     def __str__(self):
         return f'{self.name} ({self.description[:30]})'
 
+    def get_subscribed_users(self):
+        subscription_user = [subscription.user for subscription in self.subscriptions.all() if
+                             subscription.user is not None]
+        return subscription_user
+
 
 class Lesson(models.Model):
     name = models.CharField(max_length=60, verbose_name='Название')
@@ -31,7 +36,7 @@ class Lesson(models.Model):
 
 class Subscription(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="subscriptions", verbose_name="Курс")
     is_active = models.BooleanField(default=True, verbose_name="Активность подписки")
 
     def __str__(self):

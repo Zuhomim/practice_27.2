@@ -10,6 +10,7 @@ from materials.serializers import CourseSerializer, LessonSerializer
 from materials.services import get_session
 from users.permissions import IsModerator, IsOwnerOrStaff
 from users.serializers import PaymentSerializer
+from materials.tasks import send_mail_for_updates
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -31,6 +32,17 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsModerator | IsOwnerOrStaff]
         return [permission() for permission in self.permission_classes]
 
+    def update(self, request, *args, **kwargs):
+
+        instance = self.get_object()
+        subscribed_users = instance.get_subscribed_users()
+
+        # Отправление писем подписанным пользователям
+        for user in subscribed_users:
+            if user.email:
+                send_mail_for_updates.delay(instance.email, user.email)
+
+        return super().update(request, *args, **kwargs)
 
 # class CourseCreate(viewsets.ModelViewSet):
 #         serializer_class = CourseSerializer(queryset)

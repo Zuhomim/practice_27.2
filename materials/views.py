@@ -35,12 +35,13 @@ class CourseViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
 
         instance = self.get_object()
-        subscribed_users = instance.get_subscribed_users()
+        # subscribed_users = instance.get_subscribed_users()
 
         # Отправление писем подписанным пользователям
-        for user in subscribed_users:
-            if user.email:
-                send_mail_for_updates.delay(instance.email, user.email)
+        send_mail_for_updates.delay(instance.id)
+        # for user in subscribed_users:
+        #     if user.email:
+        #         send_mail_for_updates.delay(instance.name, user.email)
 
         return super().update(request, *args, **kwargs)
 

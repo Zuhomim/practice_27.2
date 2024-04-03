@@ -86,7 +86,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'materials',
         'USER': 'postgres',
-        'PASSWORD': 6503,
+        'PASSWORD': 'mysecretpassword',
+        'HOST': 'db',
     }
 }
 
@@ -163,7 +164,7 @@ SIMPLE_JWT = {
 # Настройки CELERY
 
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = os.getenv('CACHE_LOCATION')
+CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 # URL-адрес брокера результатов
 CELERY_RESULT_BACKEND = os.getenv('CACHE_LOCATION')

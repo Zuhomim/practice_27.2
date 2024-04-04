@@ -3,13 +3,15 @@ version: '3'
 services:
 
   redis:
-    image: redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+    image: redis:5.0.3-alpine
     ports:
       - '6379:6379'
 
 
   db:
-    image: postgres
+    image: postgres:16.1-alpine
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
       - PGDATA=/ver/lib/postgresql/data/pgdata

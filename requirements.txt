@@ -1,5 +1,5 @@
 amqp==5.2.0
-asgiref==3.8.1
+asgiref~=3.7.2
 billiard==4.2.0
 celery==5.3.6
 click==8.1.7
@@ -7,13 +7,13 @@ click-didyoumean==0.3.1
 click-plugins==1.1.1
 click-repl==0.3.0
 cron-descriptor==1.4.3
-Django==5.0.4
+Django~=5.0.2
 django-celery-beat==2.6.0
 django-timezone-field==6.1.0
-djangorestframework==3.15.1
+djangorestframework~=3.14.0
 drf-yasg==1.21.7
 inflection==0.5.1
-kombu==5.3.6
+kombu~=5.3.5
 packaging==24.0
 prompt-toolkit==3.0.43
 psycopg2-binary==2.9.9
@@ -33,3 +33,12 @@ pillow~=10.2.0
 django-filter~=23.5
 stripe~=8.6.0
 djangorestframework_simplejwt==5.3.1
+pip~=23.2.1
+wheel~=0.41.2
+requests~=2.31.0
+certifi~=2024.2.2
+urllib3~=2.2.1
+idna~=3.6
+setuptools~=68.2.2
+PyJWT~=2.8.0
+python-dotenv~=1.0.1

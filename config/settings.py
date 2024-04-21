@@ -132,10 +132,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = (
-    BASE_DIR / 'static',
-)
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -184,7 +180,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 
 CELERY_BEAT_SCHEDULE = {
     'task-name': {
-        'task': 'materials.tasks.send_mail_for_updates',
+        'task': 'materials.tasks.check_last_date',
         'schedule': timedelta(minutes=1),
     },
 }

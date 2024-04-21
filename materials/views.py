@@ -17,6 +17,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     pagination_class = CoursePaginator
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         new_course = self.request
@@ -24,12 +25,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def get_permissions(self):
-        if self.action == 'create':
-            self.permission_classes = [IsAuthenticated]
-        elif self.action == 'delete':
-            self.permission_classes = [IsOwnerOrStaff]
-        elif self.action == 'list' or self.action == 'update':
-            self.permission_classes = [IsModerator | IsOwnerOrStaff]
+        if self.action == 'retrieve':
+            self.permission_classes = [IsAuthenticated | IsOwnerOrStaff]
+        if self.action == 'delete':
+            self.permission_classes = [IsAuthenticated | IsOwnerOrStaff]
+        elif self.action == 'update':
+            self.permission_classes = [IsAuthenticated, IsModerator | IsOwnerOrStaff]
         return [permission() for permission in self.permission_classes]
 
     def update(self, request, *args, **kwargs):
